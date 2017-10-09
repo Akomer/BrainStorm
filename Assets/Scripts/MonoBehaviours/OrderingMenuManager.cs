@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class OrderingMenuManager : MonoBehaviour
 {
@@ -45,6 +46,11 @@ public class OrderingMenuManager : MonoBehaviour
     {
         InfoPanel.SetActive(false);
         MenuPanel.SetActive(true);
+    }
+
+    public void BackToMainPage()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void StartGame(int x, int y)

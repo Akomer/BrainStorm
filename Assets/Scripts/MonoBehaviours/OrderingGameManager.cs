@@ -145,6 +145,11 @@ public class OrderingGameManager : MonoBehaviour
 
     private void GameEnd()
     {
+        for(var i = 0; i < numberOfButtons; i++)
+        {
+            Destroy(buttons[i].gameObject);
+        }
+        buttons.Clear();
         OnGameEnd?.Invoke(this, new System.EventArgs());
     }
 }
