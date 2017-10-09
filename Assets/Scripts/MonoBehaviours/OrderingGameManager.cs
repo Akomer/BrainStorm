@@ -9,6 +9,8 @@ public class OrderingGameManager : MonoBehaviour
     public Button numberButtonPrefab;
     public Transform buttonParent;
 
+    public event System.EventHandler OnGameEnd;
+
     private List<Button> buttons;
     private int xSize;
     private int ySize;
@@ -21,8 +23,13 @@ public class OrderingGameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        xSize = 3;
-        ySize = 3;
+
+    }
+
+    public void StartGame(int x, int y)
+    {
+        xSize = x;
+        ySize = y;
         numberOfButtons = xSize * ySize;
         spacing = new Vector2(5f, 5f);
         var visualTotalSize = new Vector2(xSize * (50f + spacing.x) - spacing.x,
@@ -31,11 +38,22 @@ public class OrderingGameManager : MonoBehaviour
         var visualTopLeftCorner = -visualTotalSize / 2f;
         startPosition = visualTopLeftCorner + buttonVisualCenter;
 
-        var playground = buttonParent.transform as RectTransform;
-        playground.sizeDelta = visualTotalSize + new Vector2(10f, 10f);
+        InitPlayground(visualTotalSize);
 
         model = new OrderingModel();
         InitButtons();
+    }
+
+    public void ExitGame()
+    {
+        GameEnd();
+    }
+
+    private void InitPlayground(Vector2 visualTotalSize)
+    {
+        buttonParent.gameObject.SetActive(true);
+        var playground = buttonParent.transform as RectTransform;
+        playground.sizeDelta = visualTotalSize + new Vector2(10f, 10f);
     }
 
     private void InitButtons()
@@ -120,8 +138,13 @@ public class OrderingGameManager : MonoBehaviour
             sender.gameObject.SetActive(false);
             if (i == numberOfButtons - 1)
             {
-                Reset();
+                GameEnd();
             }
         }
+    }
+
+    private void GameEnd()
+    {
+        OnGameEnd?.Invoke(this, new System.EventArgs());
     }
 }
