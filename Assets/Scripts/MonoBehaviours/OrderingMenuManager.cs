@@ -34,26 +34,22 @@ public class OrderingMenuManager : MonoBehaviour
 
     public void ShowInformation()
     {
-        MenuPanel.SetActive(false);
-        InfoPanel.SetActive(true);
+        ShowPanelFromMenu(InfoPanel);
     }
 
     public void ShowCustomStart()
     {
-        MenuPanel.SetActive(false);
-        CustomPanel.SetActive(true);
+        ShowPanelFromMenu(CustomPanel);
     }
 
     public void BackToMenuFromInfo()
     {
-        InfoPanel.SetActive(false);
-        MenuPanel.SetActive(true);
+        BackToMenuFrom(InfoPanel);
     }
 
     public void BackToMenuFromCustom()
     {
-        CustomPanel.SetActive(false);
-        MenuPanel.SetActive(true);
+        BackToMenuFrom(CustomPanel);
     }
 
     public void StartCustomGame(int x, int y)
@@ -65,6 +61,18 @@ public class OrderingMenuManager : MonoBehaviour
     public void BackToMainPage()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    private void BackToMenuFrom(GameObject panel)
+    {
+        panel.SetActive(false);
+        MenuPanel.SetActive(true);
+    }
+
+    private void ShowPanelFromMenu(GameObject panel)
+    {
+        MenuPanel.SetActive(false);
+        panel.SetActive(true);
     }
 
     private void StartGame(int x, int y)
