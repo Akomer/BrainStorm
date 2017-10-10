@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,27 +8,33 @@ public class PuzzleGameManager : MonoBehaviour
     public Button puzzlePiecePrefab;
     public Texture image;
     public Transform puzzleBoard;
+    public RectTransform victoryPanel;
 
     private int xSize, ySize;
     private int numberOfPieces;
 
-    private List<RawImage> puzzlePieces;
-    private Button selectedButton = null;
+    private List<Button> puzzlePieces;
+    private Button selectedButton;
 
     // Use this for initialization
     void Start()
     {
+
+
+    }
+
+    public void StartGame(int x, int y)
+    {
+        xSize = x;
+        ySize = y;
         InitSettings();
 
         InitPieces();
         MixPiecesOnBoard();
-
     }
 
     private void InitSettings()
     {
-        xSize = 3;
-        ySize = 3;
         numberOfPieces = xSize * ySize;
 
         puzzleBoard.GetComponent<GridLayoutGroup>().constraintCount = xSize;
@@ -38,7 +42,7 @@ public class PuzzleGameManager : MonoBehaviour
 
     private void InitPieces()
     {
-        puzzlePieces = new List<RawImage>(numberOfPieces);
+        puzzlePieces = new List<Button>(numberOfPieces);
         var pieceUvWidth = 1f / xSize;
         var pieceUvHeight = 1f / ySize;
         for (int y = 0, i = 0; y < ySize; y++)
@@ -51,6 +55,7 @@ public class PuzzleGameManager : MonoBehaviour
                 pieceImage.texture = image;
                 pieceImage.uvRect = new Rect(x * pieceUvWidth, y * pieceUvHeight, pieceUvWidth, pieceUvHeight);
                 piece.targetGraphic = pieceImage;
+                puzzlePieces.Add(piece);
             }
         }
     }
@@ -64,6 +69,10 @@ public class PuzzleGameManager : MonoBehaviour
                 SwapSelectedWithTheNewPiece(piece);
             }
             RemoveSelection();
+            if (CheckIfFinished())
+            {
+                GameEnd();
+            }
         }
         else
         {
@@ -85,7 +94,7 @@ public class PuzzleGameManager : MonoBehaviour
         var shift = i1 > i2 ? 1 : -1;
 
         puzzleBoard.GetChild(i1).SetSiblingIndex(i2);
-        puzzleBoard.GetChild(i2+shift).SetSiblingIndex(i1);
+        puzzleBoard.GetChild(i2 + shift).SetSiblingIndex(i1);
     }
 
     private void RemoveSelection()
@@ -99,8 +108,38 @@ public class PuzzleGameManager : MonoBehaviour
         selectedButton = piece;
     }
 
+    private bool CheckIfFinished()
+    {
+        for (var i = 0; i < numberOfPieces; i++)
+        {
+            if (puzzleBoard.GetChild(i).gameObject != puzzlePieces[i].gameObject)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void MixPiecesOnBoard()
     {
-        //puzzleBoard.GetChild(0).SetSiblingIndex(3);
+        for (var i = 0; i < numberOfPieces; i++)
+        {
+            var from = Random.Range(0, numberOfPieces);
+            var to = Random.Range(0, numberOfPieces);
+            puzzleBoard.GetChild(from).SetSiblingIndex(to);
+        }
+    }
+
+    private void GameEnd()
+    {
+        puzzleBoard.transform.parent.gameObject.SetActive(false);
+        victoryPanel.GetComponentInChildren<RawImage>().texture = image;
+        victoryPanel.gameObject.SetActive(true);
+
+        for(var i = 0; i < numberOfPieces; i++)
+        {
+            Destroy(puzzlePieces[i].gameObject);
+        }
+        puzzlePieces.Clear();
     }
 }
