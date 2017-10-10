@@ -11,6 +11,11 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene("Ordering");
     }
 
+    public void StartPuzzle()
+    {
+
+    }
+
     public void QuitApplication()
     {
         Application.Quit();
