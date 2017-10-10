@@ -7,19 +7,15 @@ using UnityEngine.UI;
 public class PuzzleGameManager : MonoBehaviour
 {
 
-    public RawImage puzzlePiecePrefab;
+    public Button puzzlePiecePrefab;
     public Texture image;
     public Transform puzzleBoard;
 
     private int xSize, ySize;
     private int numberOfPieces;
 
-    private float xMaxVisualSize;
-    private float yMaxVisualSize;
-    private float xMinVisualSize;
-    private float yMinVisualSize;
-
     private List<RawImage> puzzlePieces;
+    private Button selectedButton = null;
 
     // Use this for initialization
     void Start()
@@ -27,6 +23,7 @@ public class PuzzleGameManager : MonoBehaviour
         InitSettings();
 
         InitPieces();
+        MixPiecesOnBoard();
 
     }
 
@@ -37,11 +34,6 @@ public class PuzzleGameManager : MonoBehaviour
         numberOfPieces = xSize * ySize;
 
         puzzleBoard.GetComponent<GridLayoutGroup>().constraintCount = xSize;
-
-        xMinVisualSize = 300f;
-        xMaxVisualSize = 850f;
-        yMinVisualSize = 300f;
-        yMaxVisualSize = 500f;
     }
 
     private void InitPieces()
@@ -49,14 +41,66 @@ public class PuzzleGameManager : MonoBehaviour
         puzzlePieces = new List<RawImage>(numberOfPieces);
         var pieceUvWidth = 1f / xSize;
         var pieceUvHeight = 1f / ySize;
-        for (var y = 0; y < ySize; y++)
+        for (int y = 0, i = 0; y < ySize; y++)
         {
-            for (var x = 0; x < xSize; x++)
+            for (var x = 0; x < xSize; x++, i++)
             {
-                var piece = Instantiate<RawImage>(puzzlePiecePrefab, puzzleBoard);
-                piece.texture = image;
-                piece.uvRect = new Rect(x * pieceUvWidth, y * pieceUvHeight, pieceUvWidth, pieceUvHeight);
+                var piece = Instantiate<Button>(puzzlePiecePrefab, puzzleBoard);
+                piece.onClick.AddListener(() => ClickOnPiece(piece));
+                var pieceImage = piece.GetComponentInChildren<RawImage>();
+                pieceImage.texture = image;
+                pieceImage.uvRect = new Rect(x * pieceUvWidth, y * pieceUvHeight, pieceUvWidth, pieceUvHeight);
+                piece.targetGraphic = pieceImage;
             }
         }
+    }
+
+    private void ClickOnPiece(Button piece)
+    {
+        if (OtherPieceAlreadySelected())
+        {
+            if (selectedButton != piece)
+            {
+                SwapSelectedWithTheNewPiece(piece);
+            }
+            RemoveSelection();
+        }
+        else
+        {
+            Debug.Log("Selection");
+            SetSelection(piece);
+        }
+    }
+
+    private bool OtherPieceAlreadySelected()
+    {
+        return selectedButton != null;
+    }
+
+    private void SwapSelectedWithTheNewPiece(Button secondPiece)
+    {
+        var i1 = selectedButton.transform.GetSiblingIndex();
+        var i2 = secondPiece.transform.GetSiblingIndex();
+
+        var shift = i1 > i2 ? 1 : -1;
+
+        puzzleBoard.GetChild(i1).SetSiblingIndex(i2);
+        puzzleBoard.GetChild(i2+shift).SetSiblingIndex(i1);
+    }
+
+    private void RemoveSelection()
+    {
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+        selectedButton = null;
+    }
+
+    private void SetSelection(Button piece)
+    {
+        selectedButton = piece;
+    }
+
+    private void MixPiecesOnBoard()
+    {
+        //puzzleBoard.GetChild(0).SetSiblingIndex(3);
     }
 }
