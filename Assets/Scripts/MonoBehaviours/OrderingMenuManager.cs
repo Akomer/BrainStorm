@@ -10,6 +10,7 @@ public class OrderingMenuManager : MonoBehaviour
     public GameObject Playground;
     public GameObject MenuPanel;
     public GameObject InfoPanel;
+    public GameObject CustomPanel;
 
     private void Start()
     {
@@ -31,21 +32,34 @@ public class OrderingMenuManager : MonoBehaviour
         StartGame(7, 7);
     }
 
-    public void StartCustom()
-    {
-        StartGame(3, 3);
-    }
-
     public void ShowInformation()
     {
         MenuPanel.SetActive(false);
         InfoPanel.SetActive(true);
     }
 
+    public void ShowCustomStart()
+    {
+        MenuPanel.SetActive(false);
+        CustomPanel.SetActive(true);
+    }
+
     public void BackToMenuFromInfo()
     {
         InfoPanel.SetActive(false);
         MenuPanel.SetActive(true);
+    }
+
+    public void BackToMenuFromCustom()
+    {
+        CustomPanel.SetActive(false);
+        MenuPanel.SetActive(true);
+    }
+
+    public void StartCustomGame(int x, int y)
+    {
+        CustomPanel.SetActive(false);
+        StartGame(x, y);
     }
 
     public void BackToMainPage()
