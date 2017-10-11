@@ -17,6 +17,11 @@ public class OrderingMenuManager : MonoBehaviour
         gameManager.OnGameEnd += GameEnd;
     }
 
+    private void OnDestroy()
+    {
+        gameManager.OnGameEnd -= GameEnd;
+    }
+
     public void StartSmall()
     {
         StartGame(3, 3);

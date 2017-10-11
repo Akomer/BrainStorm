@@ -5,10 +5,13 @@ using UnityEngine.UI;
 public class PuzzleGameManager : MonoBehaviour
 {
 
+    public GameObject Playground;
     public Button puzzlePiecePrefab;
     public Texture image;
     public Transform puzzleBoard;
     public RectTransform victoryPanel;
+
+    public event System.EventHandler OnGameEnd;
 
     private int xSize, ySize;
     private int numberOfPieces;
@@ -19,8 +22,7 @@ public class PuzzleGameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
-
+        
     }
 
     public void StartGame(int x, int y)
@@ -31,6 +33,8 @@ public class PuzzleGameManager : MonoBehaviour
 
         InitPieces();
         MixPiecesOnBoard();
+
+        Playground.SetActive(true);
     }
 
     private void InitSettings()
@@ -100,12 +104,18 @@ public class PuzzleGameManager : MonoBehaviour
     private void RemoveSelection()
     {
         UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+        var buttonColors = selectedButton.colors;
+        buttonColors.normalColor = Color.white;
+        selectedButton.colors = buttonColors;
         selectedButton = null;
     }
 
     private void SetSelection(Button piece)
     {
         selectedButton = piece;
+        var buttonColors = selectedButton.colors;
+        buttonColors.normalColor = buttonColors.highlightedColor;
+        selectedButton.colors = buttonColors;
     }
 
     private bool CheckIfFinished()
@@ -132,7 +142,7 @@ public class PuzzleGameManager : MonoBehaviour
 
     private void GameEnd()
     {
-        puzzleBoard.transform.parent.gameObject.SetActive(false);
+        Playground.SetActive(false);
         victoryPanel.GetComponentInChildren<RawImage>().texture = image;
         victoryPanel.gameObject.SetActive(true);
 
