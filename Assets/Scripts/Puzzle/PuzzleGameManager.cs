@@ -15,8 +15,8 @@ public class PuzzleGameManager : MonoBehaviour
 
     private int xSize, ySize;
     private int numberOfPieces;
-    private const float maxWidth = 800;
-    private const float maxHeight = 400;
+    private const float maxWidth = 1400;
+    private const float maxHeight = 800;
     private const float widthHeightRatio = maxWidth / maxHeight;
 
     private List<Button> puzzlePieces;
