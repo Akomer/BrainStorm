@@ -37,6 +37,12 @@ public class PuzzleGameManager : MonoBehaviour
         Playground.SetActive(true);
     }
 
+    public void StartGame(int x, int y, RawImage image)
+    {
+        this.image = image.mainTexture;
+        StartGame(x, y);
+    }
+
     private void InitSettings()
     {
         numberOfPieces = xSize * ySize;
