@@ -49,7 +49,6 @@ public class PuzzleCustomManager : MonoBehaviour
                 if (sizeRatio > widthHeightRatio)
                 {
                     var imageSize = image.rectTransform.sizeDelta;
-                    Debug.Log($"mWid: {maxWidth} and ration: {sizeRatio}");
                     imageSize.y = maxWidth / sizeRatio;
                     imageSize.x = maxWidth;
                     image.rectTransform.sizeDelta = imageSize;
@@ -57,7 +56,6 @@ public class PuzzleCustomManager : MonoBehaviour
                 else
                 {
                     var imageSize = image.rectTransform.sizeDelta;
-                    Debug.Log($"sizey: {texture.height} and ration: {sizeRatio}");
                     imageSize.x = maxHeight * sizeRatio;
                     imageSize.y = maxHeight;
                     image.rectTransform.sizeDelta = imageSize;

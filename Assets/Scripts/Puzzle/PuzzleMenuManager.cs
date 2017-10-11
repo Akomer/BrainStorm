@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PuzzleMenuManager : MonoBehaviour {
 
     public PuzzleGameManager gameManager;
     public GameObject MenuPanel;
     public GameObject Playground;
+    public GameObject InfoPanel;
+    public GameObject CustomPanel;
 
     private void Start()
     {
@@ -40,6 +41,31 @@ public class PuzzleMenuManager : MonoBehaviour {
         gameManager.StartGame(x, y, image);
     }
 
+    public void BackToMainPage()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+    
+    public void ShowInformation()
+    {
+        ShowPanelFromMenu(InfoPanel);
+    }
+
+    public void ShowCustomStart()
+    {
+        ShowPanelFromMenu(CustomPanel);
+    }
+
+    public void BackToMenuFromInfo()
+    {
+        BackToMenuFrom(InfoPanel);
+    }
+
+    public void BackToMenuFromCustom()
+    {
+        BackToMenuFrom(CustomPanel);
+    }
+
     private void StartGame(int x, int y)
     {
         MenuPanel.SetActive(false);
@@ -50,5 +76,17 @@ public class PuzzleMenuManager : MonoBehaviour {
     {
         Playground.SetActive(false);
         MenuPanel.SetActive(true);
+    }
+
+    private void BackToMenuFrom(GameObject panel)
+    {
+        panel.SetActive(false);
+        MenuPanel.SetActive(true);
+    }
+
+    private void ShowPanelFromMenu(GameObject panel)
+    {
+        MenuPanel.SetActive(false);
+        panel.SetActive(true);
     }
 }

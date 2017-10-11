@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class PuzzleGameManager : MonoBehaviour
 {
 
-    public GameObject Playground;
+    public GameObject playground;
     public Button puzzlePiecePrefab;
     public Texture image;
     public Transform puzzleBoard;
@@ -15,16 +15,13 @@ public class PuzzleGameManager : MonoBehaviour
 
     private int xSize, ySize;
     private int numberOfPieces;
+    private const float maxWidth = 800;
+    private const float maxHeight = 400;
+    private const float widthHeightRatio = maxWidth / maxHeight;
 
     private List<Button> puzzlePieces;
     private Button selectedButton;
-
-    // Use this for initialization
-    void Start()
-    {
-        
-    }
-
+    
     public void StartGame(int x, int y)
     {
         xSize = x;
@@ -34,7 +31,7 @@ public class PuzzleGameManager : MonoBehaviour
         InitPieces();
         MixPiecesOnBoard();
 
-        Playground.SetActive(true);
+        SetupImageViews();
     }
 
     public void StartGame(int x, int y, RawImage image)
@@ -43,11 +40,14 @@ public class PuzzleGameManager : MonoBehaviour
         StartGame(x, y);
     }
 
+    public void ExitGame()
+    {
+        GameEnd();
+    }
+
     private void InitSettings()
     {
         numberOfPieces = xSize * ySize;
-
-        puzzleBoard.GetComponent<GridLayoutGroup>().constraintCount = xSize;
     }
 
     private void InitPieces()
@@ -81,7 +81,7 @@ public class PuzzleGameManager : MonoBehaviour
             RemoveSelection();
             if (CheckIfFinished())
             {
-                GameEnd();
+                Victory();
             }
         }
         else
@@ -146,16 +146,48 @@ public class PuzzleGameManager : MonoBehaviour
         }
     }
 
-    private void GameEnd()
+    private void SetupImageViews()
     {
-        Playground.SetActive(false);
+        var grid = puzzleBoard.GetComponent<GridLayoutGroup>();
+        grid.constraintCount = xSize;
+        var playgroundTransform = playground.transform as RectTransform;
+
+        var imageSizeRatio = (float)image.width / image.height;
+        if (imageSizeRatio > widthHeightRatio)
+        {
+            var newsizeY = maxWidth / imageSizeRatio;
+            var newCellSize = new Vector2(maxWidth / xSize, newsizeY / ySize);
+            grid.cellSize = newCellSize;
+            playgroundTransform.sizeDelta = new Vector2(maxWidth, newsizeY);
+        }
+        else
+        {
+            var newSizeX = maxHeight * imageSizeRatio;
+            var newCellSize = new Vector2(newSizeX / xSize, maxHeight / ySize);
+            grid.cellSize = newCellSize;
+            playgroundTransform.sizeDelta = new Vector2(newSizeX, maxHeight);
+        }
+        victoryPanel.sizeDelta = playgroundTransform.sizeDelta;
+        playground.SetActive(true);
+    }
+
+    private void Victory()
+    {
+        playground.SetActive(false);
         victoryPanel.GetComponentInChildren<RawImage>().texture = image;
         victoryPanel.gameObject.SetActive(true);
+    }
 
-        for(var i = 0; i < numberOfPieces; i++)
+    private void GameEnd()
+    {
+        playground.SetActive(false);
+        victoryPanel.gameObject.SetActive(false);
+
+        for (var i = 0; i < numberOfPieces; i++)
         {
             Destroy(puzzlePieces[i].gameObject);
         }
         puzzlePieces.Clear();
+        OnGameEnd?.Invoke(this, new System.EventArgs());
     }
 }
